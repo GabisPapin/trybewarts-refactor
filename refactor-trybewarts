@@ -1,0 +1,30 @@
+Feedback Trybewarts 
+
+Header da página
+email
+senha
+botão entrar
+
+body da página
+
+Feedback
+Nome
+sobrenome
+Casa
+Qual sua família
+conteúdo
+avaliação 1 a 10
+comentário
+
+backend
+
+postgress
+TypeScript
+TypeORM
+Express
+nodejs
+ESlint
+Prettier
+Git
+.env
+.gitignore
