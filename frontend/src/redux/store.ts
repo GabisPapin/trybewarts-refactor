@@ -1,19 +1,12 @@
-import { combineReducers, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { UserReducer } from './reducers/userSlice';
 import storage from 'redux-persist/lib/storage';
-import {
-	persistStore,
-	persistReducer,
-	FLUSH,
-	REHYDRATE,
-	PAUSE,
-	PERSIST,
-	PURGE,
-	REGISTER,
-} from 'redux-persist';
+import { persistStore, persistReducer } from 'redux-persist';
+import { sessionApi } from '../service/httpService';
 
 const rootReducer = combineReducers({
   user: UserReducer,
+  [sessionApi.reducerPath]: sessionApi.reducer,
 });
 
 const persistConfig = {
@@ -25,12 +18,7 @@ const persistConfig = {
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
-  reducer: persistReducer,
-  middleware: getDefaultMiddleware => getDefaultMiddleware({
-    serializableCheck: {
-      ignoreActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-    },
-  }).concat([]),
+  reducer: persistedReducer,
 });
 
 export const persistor = persistStore(store);
