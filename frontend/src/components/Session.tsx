@@ -1,18 +1,26 @@
+import React, { type FC } from 'react';
 import { useAppDispatch } from 'redux/hooks';
-import { useForm, Controller, SubmitHandler } from 'react-hook-form';
+import { useForm, Controller, type SubmitHandler } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { FormData } from 'interfaces/userInterfaces';
-
+import { type FormData } from 'interfaces/userInterfaces';
+import { useSessionMutation } from 'service/httpService';
+import { saveEmail } from 'redux/reducers/userSlice';
 
 const schema = Yup.object({
-	email: Yup.string().required(),
-	password: Yup.string().min(8).required(),
+  email: Yup.string().required(),
+  password: Yup.string().min(8).required(),
 }).required();
 
-const Session = () => {
+const Session: FC = () => {
   const dispatch = useAppDispatch();
-  const { handleSubmit, control, reset, formState: { errors }} = useForm<FormData>({
+  const [session] = useSessionMutation();
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm<FormData>({
     resolver: yupResolver(schema),
   });
 
@@ -20,16 +28,18 @@ const Session = () => {
     const { email, password } = values;
 
     try {
-
+      const response = await session({ email, password }).unwrap();
+      dispatch(saveEmail(response.email));
+      reset({ email: '', password: '' });
     } catch (error) {
-
+      console.log(error);
+      reset({ email: '', password: '' });
     }
-  }
-
+  };
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={() => handleSubmit(onSubmit)}>
         <Controller
           render={({ field }) => <input type="email" {...field} />}
           name="email"
@@ -44,10 +54,10 @@ const Session = () => {
           defaultValue=""
         />
         <p>{errors.password?.message}</p>
-        <button type='submit'>Login</button>
+        <button type="submit">Login</button>
       </form>
     </div>
   );
-}
+};
 
 export default Session;
