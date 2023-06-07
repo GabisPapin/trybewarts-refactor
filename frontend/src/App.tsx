@@ -1,17 +1,12 @@
-import React, { type FC, lazy, Suspense } from 'react';
+import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import Layout from 'Pages/Layout';
 
-const Session = lazy(async () => await import('./components/Session'));
-
-const App: FC = () => {
+const App = (): JSX.Element => {
   return (
-    <>
-      <Suspense fallback={<div>Loading...</div>}>
-        <Routes>
-          <Route path="/" element={<Session />} />
-        </Routes>
-      </Suspense>
-    </>
+    <Routes>
+      <Route path="/" element={<Layout />} />
+    </Routes>
   );
 };
 
