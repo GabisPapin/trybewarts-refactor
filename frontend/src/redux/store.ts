@@ -1,26 +1,14 @@
-import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import { UserReducer } from './reducers/userSlice';
-import storage from 'redux-persist/lib/storage';
-import { persistStore, persistReducer } from 'redux-persist';
-import { sessionApi } from '../service/httpService';
-
-const rootReducer = combineReducers({
-  user: UserReducer,
-  [sessionApi.reducerPath]: sessionApi.reducer,
-});
-
-const persistConfig = {
-  key: 'root',
-  storage,
-  whitelist: ['user'],
-};
-
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+import { configureStore } from '@reduxjs/toolkit';
+import { userReducer } from 'redux/reducers/usersSlice';
+import { sessionApi } from 'shared/httpService';
 
 export const store = configureStore({
-  reducer: persistedReducer,
+  reducer: {
+    user: userReducer,
+    [sessionApi.reducerPath]: sessionApi.reducer,
+  },
+  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(sessionApi.middleware),
 });
 
-export const persistor = persistStore(store);
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
