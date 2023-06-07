@@ -1,62 +1,53 @@
-import React, { type FC } from 'react';
-import { useAppDispatch } from 'redux/hooks';
-import { useForm, Controller, type SubmitHandler } from 'react-hook-form';
-import * as Yup from 'yup';
+import React from 'react';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { type FormData } from 'interfaces/userInterfaces';
-import { useSessionMutation } from 'service/httpService';
-import { saveEmail } from 'redux/reducers/userSlice';
+import * as yup from 'yup';
+import { useAppDispatch } from 'redux/hooks';
+import { saveEmail } from 'redux/reducers/usersSlice';
+import { useSessionMutation } from 'shared/httpService';
+import { type IFormData } from 'interfaces/ISession';
 
-const schema = Yup.object({
-  email: Yup.string().required(),
-  password: Yup.string().min(8).required(),
-}).required();
+const schema = yup
+  .object({
+    email: yup.string().email().required(),
+    password: yup.string().min(8).max(16).required(),
+  })
+  .required();
 
-const Session: FC = () => {
+const Session = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const [session] = useSessionMutation();
+
   const {
+    register,
     handleSubmit,
-    control,
     reset,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<IFormData>({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<FormData> = async values => {
-    const { email, password } = values;
-
+  const onSubmit = async ({ email, password }: IFormData): Promise<void> => {
     try {
-      const response = await session({ email, password }).unwrap();
-      dispatch(saveEmail(response.email));
-      reset({ email: '', password: '' });
+      await session({ email, password }).unwrap();
+      dispatch(saveEmail(email));
+      reset();
     } catch (error) {
-      console.log(error);
-      reset({ email: '', password: '' });
+      console.error(error);
+      reset();
     }
   };
 
   return (
-    <div>
-      <form onSubmit={() => handleSubmit(onSubmit)}>
-        <Controller
-          render={({ field }) => <input type="email" {...field} />}
-          name="email"
-          control={control}
-          defaultValue=""
-        />
-        <p>{errors.email?.message}</p>
-        <Controller
-          render={({ field }) => <input type="password" {...field} />}
-          name="password"
-          control={control}
-          defaultValue=""
-        />
-        <p>{errors.password?.message}</p>
-        <button type="submit">Login</button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input type="email" {...register('email')} placeholder="Email" />
+      <span>{errors.email?.message}</span>
+
+      <input type="password" {...register('password')} placeholder="Senha" />
+      <span>{errors.password?.message}</span>
+
+      <input type="submit" />
+    </form>
   );
 };
 
