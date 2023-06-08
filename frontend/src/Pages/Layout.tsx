@@ -1,8 +1,8 @@
-import React, { type FC } from 'react';
+import React from 'react';
 import Session from 'components/Session';
-import Feedback from 'components/Feedback';
+import Feedback from 'components/feedback/Feedback';
 
-const Layout: FC = () => {
+const Layout = (): JSX.Element => {
   return (
     <>
       <Session />
