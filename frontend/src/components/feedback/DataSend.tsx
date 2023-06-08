@@ -1,3 +1,10 @@
+export const dataHouse = [
+  { value: 'Gitnória' },
+  { value: 'Reactpuff' },
+  { value: 'Corvinode' },
+  { value: 'Pytherina' },
+];
+
 export const dataStack = [
   { value: 'HOFs', label: 'HOFs' },
   { value: 'Jest', label: 'Jest' },

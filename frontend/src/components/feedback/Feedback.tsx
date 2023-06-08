@@ -3,10 +3,11 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import type { IFormData } from 'interfaces/IFeedback';
-import { dataStack, dataScore, dataFamily } from 'components/feedback/DataSend';
+import { dataStack, dataScore, dataFamily, dataHouse } from 'components/feedback/DataSend';
 import { useFeedbackMutation } from 'shared/httpService';
 import { useAppDispatch, useAppSelector } from 'redux/hooks';
 import { saveComments } from 'redux/reducers/feedbackSlice';
+import TextArea from 'components/feedback/Textarea';
 
 const MAX_LENGTH_TEXT_AREA = 500;
 
@@ -41,24 +42,16 @@ const Feedback = (): JSX.Element => {
     resolver: yupResolver(schema),
   });
 
-  const counterTextArea = (
-    event: React.ChangeEvent<HTMLTextAreaElement>,
-    eventKey: string,
-  ): void => {
-    const valueArea = event.target.value;
-    const counter = 500;
+  const handleSaveComments = (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
+    dispatch(saveComments(event.target.value));
+  };
 
-    if (eventKey === 'Backspace') {
-      setValueCounter(valueCounter + 1);
-    } else if (counter < 0) {
-      setValueCounter(500);
-    } else {
-      if (eventKey !== 'Backspace') {
-        setValueCounter(counter - valueArea.length);
-      } else if (counter - valueArea.length < MAX_LENGTH_TEXT_AREA) {
-        setValueCounter(counter - valueArea.length);
-      }
-    }
+  const ContextProps = {
+    handleSaveComments,
+    setValueCounter,
+    valueCounter,
+    setEventKey,
+    eventKey,
   };
 
   const onSubmit = async (data: IFormData): Promise<void> => {
@@ -104,11 +97,12 @@ const Feedback = (): JSX.Element => {
       <label htmlFor="house">
         Casa
         <select id="house" {...register('house')}>
-          <option value="">Selecionar...</option>
-          <option value="Gitnória">Gitnória</option>
-          <option value="Reactpuff">Reactpuff</option>
-          <option value="Corvinode">Corvinode</option>
-          <option value="Pytherina">Pytherina</option>
+          <option value="Selecionar...">Selecionar...</option>
+          {dataHouse.map((el, index) => (
+            <option key={index} value={el.value}>
+              {el.value}
+            </option>
+          ))}
         </select>
       </label>
       <span>{errors.house?.message}</span>
@@ -140,23 +134,7 @@ const Feedback = (): JSX.Element => {
         </div>
       ))}
       <span>{errors.score?.message}</span>
-      <label htmlFor="comments">
-        Deixe seu comentário
-        <textarea
-          id="comments"
-          cols={30}
-          rows={10}
-          maxLength={500}
-          onKeyDown={event => {
-            setEventKey(event.key);
-          }}
-          onChange={event => {
-            dispatch(saveComments(event.target.value));
-            counterTextArea(event, eventKey);
-          }}
-        ></textarea>
-      </label>
-      <span>{valueCounter}</span>
+      <TextArea ContextProps={ContextProps} />
       <span>{errors.comments?.message}</span>
       <input
         id="agreement"

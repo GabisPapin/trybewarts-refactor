@@ -8,3 +8,13 @@ export interface IFormData {
   score: string;
   comments: string;
 }
+
+export interface ITextArea {
+  ContextProps: {
+    handleSaveComments: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    setValueCounter: (maxLengthTextArea: number) => void;
+    valueCounter: number;
+    setEventKey: (event: string) => void;
+    eventKey: string;
+  };
+}
