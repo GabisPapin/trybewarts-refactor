@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import { useAppDispatch } from 'redux/hooks';
 import { saveEmail } from 'redux/reducers/usersSlice';
 import { useSessionMutation } from 'shared/httpService';
-import { type IFormData } from 'interfaces/ISession';
+import { type IFormDataSession } from 'interfaces/ISession';
 
 const schema = yup
   .object({
@@ -23,11 +23,11 @@ const Session = (): JSX.Element => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<IFormData>({
+  } = useForm<IFormDataSession>({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = async ({ email, password }: IFormData): Promise<void> => {
+  const onSubmit = async ({ email, password }: IFormDataSession): Promise<void> => {
     try {
       await session({ email, password }).unwrap();
       dispatch(saveEmail(email));
