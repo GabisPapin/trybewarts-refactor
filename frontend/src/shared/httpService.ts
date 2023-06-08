@@ -29,7 +29,7 @@ export const feedbackApi = createApi({
   endpoints: build => ({
     Feedback: build.mutation<
       {
-        firstname: string;
+        name: string;
         lastname: string;
         email: string;
         house: string;

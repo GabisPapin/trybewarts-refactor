@@ -5,12 +5,14 @@ import * as yup from 'yup';
 import type { IFormData } from 'interfaces/IFeedback';
 import { dataStack, dataScore, dataFamily } from 'components/feedback/DataSend';
 import { useFeedbackMutation } from 'shared/httpService';
+import { useAppDispatch, useAppSelector } from 'redux/hooks';
+import { saveComments } from 'redux/reducers/feedbackSlice';
 
 const MAX_LENGTH_TEXT_AREA = 500;
 
 const schema = yup
   .object({
-    firstname: yup.string().required(),
+    name: yup.string().required(),
     lastname: yup.string().required(),
     email: yup.string().email().required(),
     house: yup.string().required(),
@@ -25,8 +27,11 @@ const Feedback = (): JSX.Element => {
   const [isDisabled, setDisabled] = useState<boolean>(true);
   const [valueCounter, setValueCounter] = useState<number>(MAX_LENGTH_TEXT_AREA);
   const [eventKey, setEventKey] = useState<string>('');
-  const [text, setText] = useState<string>('');
+  const dispatch = useAppDispatch();
+  // criei um selector porque o médoto onChange para o comments (tag textarea) já está sendo usado no counterTextArea.
+  const selector = useAppSelector(state => state.feedbacks);
   const [feedback] = useFeedbackMutation();
+
   const {
     register,
     handleSubmit,
@@ -56,24 +61,20 @@ const Feedback = (): JSX.Element => {
     }
   };
 
-  const textAreaHandleSubmit = (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
-    setText(event.target.value);
-  };
-
   const onSubmit = async (data: IFormData): Promise<void> => {
-    const { firstname, lastname, email, house, family, score, comments } = data;
+    const { name, lastname, email, house, family, score, comments } = data;
     const stack = data.stack[0];
+
     try {
-      console.log({ firstname, lastname, email, house, family, stack, score, comments: text });
       await feedback({
-        firstname,
+        name,
         lastname,
         email,
         house,
         family,
         stack,
         score,
-        comments: text,
+        comments: selector.comments,
       }).unwrap();
       reset();
     } catch (error) {
@@ -87,9 +88,9 @@ const Feedback = (): JSX.Element => {
       <h2>Formulário de Avaliação</h2>
       <label htmlFor="firstname">
         Nome
-        <input id="firstname" type="text" {...register('firstname')} />
+        <input id="firstname" type="text" {...register('name')} />
       </label>
-      <span>{errors.firstname?.message}</span>
+      <span>{errors.name?.message}</span>
       <label htmlFor="lastname">
         Sobrenome
         <input id="lastname" type="text" {...register('lastname')} />
@@ -150,8 +151,8 @@ const Feedback = (): JSX.Element => {
             setEventKey(event.key);
           }}
           onChange={event => {
+            dispatch(saveComments(event.target.value));
             counterTextArea(event, eventKey);
-            textAreaHandleSubmit(event);
           }}
         ></textarea>
       </label>
