@@ -21,6 +21,8 @@ export default class FeedbackController {
       comments,
     });
 
+    console.log(feedback);
+
     return res.status(201).json({ feedback });
   }
 
