@@ -1,31 +1,19 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import { useAppDispatch } from 'redux/hooks';
 import { saveEmail } from 'redux/reducers/usersSlice';
 import { useSessionMutation } from 'shared/httpService';
 import { type IFormDataSession } from 'interfaces/ISession';
-
-const schema = yup
-  .object({
-    email: yup.string().email().required(),
-    password: yup.string().min(8).max(16).required(),
-  })
-  .required();
+import { Avatar, Box, Button, Icon, TextField, useTheme } from '@mui/material';
+import { useAppThemeContext } from 'contexts/ThemeContext';
+import { green } from '@mui/material/colors';
 
 const Session = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const [session] = useSessionMutation();
+  const theme = useTheme();
+  const { toggleTheme, themeName } = useAppThemeContext();
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<IFormDataSession>({
-    resolver: yupResolver(schema),
-  });
+  const { register, handleSubmit, reset } = useForm<IFormDataSession>();
 
   const onSubmit = async ({ email, password }: IFormDataSession): Promise<void> => {
     try {
@@ -39,15 +27,50 @@ const Session = (): JSX.Element => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input type="email" {...register('email')} placeholder="Email" />
-      <span>{errors.email?.message}</span>
+    <Box
+      component="header"
+      display="flex"
+      alignItems="center"
+      bgcolor={theme.palette.background.paper}
+      height={theme.spacing(7)}
+    >
+      <Box display="flex" marginLeft={theme.spacing(1)}>
+        <Avatar sx={{ bgcolor: green[500], fontFamily: 'fantasy', fontWeight: 'bold' }}>T</Avatar>
+      </Box>
+      <Box
+        gap={2}
+        component="form"
+        display="flex"
+        marginLeft={theme.spacing(80)}
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <TextField
+          variant="outlined"
+          size="small"
+          sx={{ width: theme.spacing(25) }}
+          type="email"
+          {...register('email')}
+          placeholder="email"
+        />
 
-      <input type="password" {...register('password')} placeholder="Senha" />
-      <span>{errors.password?.message}</span>
+        <TextField
+          variant="outlined"
+          size="small"
+          sx={{ width: theme.spacing(25) }}
+          type="password"
+          {...register('password')}
+          placeholder="senha"
+        />
 
-      <input type="submit" />
-    </form>
+        <Button color="primary" disableElevation variant="contained" type="submit">
+          Entrar
+        </Button>
+
+        <Button onClick={toggleTheme}>
+          {themeName === 'light' ? <Icon>dark_mode</Icon> : <Icon>light_mode</Icon>}
+        </Button>
+      </Box>
+    </Box>
   );
 };
 
