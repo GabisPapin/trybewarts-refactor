@@ -24,6 +24,7 @@ const DarkTheme = createTheme({
   typography: {
     allVariants: {
       color: 'white',
+      fontFamily: 'fantasy',
     },
   },
 });

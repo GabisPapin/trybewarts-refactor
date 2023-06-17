@@ -21,6 +21,11 @@ const LightTheme = createTheme({
       default: '#f7f6f3',
     },
   },
+  typography: {
+    allVariants: {
+      fontFamily: 'fantasy',
+    },
+  },
 });
 
 export default LightTheme;

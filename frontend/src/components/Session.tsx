@@ -3,7 +3,7 @@ import { useAppDispatch } from 'redux/hooks';
 import { saveEmail } from 'redux/reducers/usersSlice';
 import { useSessionMutation } from 'shared/httpService';
 import { type IFormDataSession } from 'interfaces/ISession';
-import { Avatar, Box, Button, Icon, TextField, useTheme } from '@mui/material';
+import { Avatar, Box, Button, Icon, TextField, Typography, useTheme } from '@mui/material';
 import { useAppThemeContext } from 'contexts/ThemeContext';
 import { green } from '@mui/material/colors';
 
@@ -34,14 +34,37 @@ const Session = (): JSX.Element => {
       bgcolor={theme.palette.background.paper}
       height={theme.spacing(7)}
     >
-      <Box display="flex" marginLeft={theme.spacing(1)}>
-        <Avatar sx={{ bgcolor: green[500], fontFamily: 'fantasy', fontWeight: 'bold' }}>T</Avatar>
+      <Box display="flex" marginLeft={theme.spacing(5)}>
+        <Avatar
+          variant="circular"
+          sx={{
+            bgcolor: themeName === 'light' ? green[500] : theme.palette.background.default,
+          }}
+        >
+          <Typography variant="h5" sx={{ fontFamily: 'fantasy', fontWeight: 'bold' }}>
+            T
+          </Typography>
+        </Avatar>
       </Box>
+
+      <Box display="flex" marginLeft={theme.spacing(25)}>
+        <Typography
+          variant="h4"
+          sx={{
+            color: themeName === 'light' ? green[500] : theme.typography.fontFamily,
+            fontWeight: 'bold',
+          }}
+        >
+          Trybewarts
+        </Typography>
+      </Box>
+
       <Box
         gap={2}
         component="form"
         display="flex"
-        marginLeft={theme.spacing(80)}
+        flexDirection="row"
+        marginLeft={theme.spacing(25)}
         onSubmit={handleSubmit(onSubmit)}
       >
         <TextField
@@ -63,7 +86,9 @@ const Session = (): JSX.Element => {
         />
 
         <Button color="primary" disableElevation variant="contained" type="submit">
-          Entrar
+          <Typography variant="button" sx={{ fontFamily: 'fantasy' }}>
+            Entrar
+          </Typography>
         </Button>
 
         <Button onClick={toggleTheme}>
