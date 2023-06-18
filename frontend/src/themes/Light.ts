@@ -5,9 +5,9 @@ const LightTheme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: green[400],
+      main: green[500],
       dark: green[600],
-      light: green[200],
+      light: green[300],
       contrastText: '#ffffff',
     },
     secondary: {

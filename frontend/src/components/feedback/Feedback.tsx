@@ -8,6 +8,22 @@ import { useFeedbackMutation } from 'shared/httpService';
 import { useAppDispatch, useAppSelector } from 'redux/hooks';
 import { saveComments } from 'redux/reducers/feedbackSlice';
 import TextArea from 'components/feedback/Textarea';
+import {
+  Box,
+  Button,
+  Checkbox,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  MenuItem,
+  Radio,
+  RadioGroup,
+  TextField,
+  Typography,
+  useTheme,
+} from '@mui/material';
+import ImageLogo from 'components/ImageLogo';
 
 const MAX_LENGTH_TEXT_AREA = 500;
 
@@ -32,6 +48,7 @@ const Feedback = (): JSX.Element => {
   // criei um selector porque o médoto onChange para o comments (tag textarea) já está sendo usado no counterTextArea.
   const selector = useAppSelector(state => state.feedbacks);
   const [feedback] = useFeedbackMutation();
+  const theme = useTheme();
 
   const {
     register,
@@ -42,8 +59,8 @@ const Feedback = (): JSX.Element => {
     resolver: yupResolver(schema),
   });
 
-  const handleSaveComments = (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
-    dispatch(saveComments(event.target.value));
+  const handleSaveComments = (event: string): void => {
+    dispatch(saveComments(event));
   };
 
   const ContextProps = {
@@ -77,75 +94,197 @@ const Feedback = (): JSX.Element => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <h2>Formulário de Avaliação</h2>
-      <label htmlFor="firstname">
-        Nome
-        <input id="firstname" type="text" {...register('name')} />
-      </label>
-      <span>{errors.name?.message}</span>
-      <label htmlFor="lastname">
-        Sobrenome
-        <input id="lastname" type="text" {...register('lastname')} />
-      </label>
-      <span>{errors.lastname?.message}</span>
-      <label htmlFor="email">
-        Email
-        <input id="email" type="text" {...register('email')} />
-      </label>
-      <span>{errors.email?.message}</span>
-      <label htmlFor="house">
-        Casa
-        <select id="house" {...register('house')}>
-          <option value="Selecionar...">Selecionar...</option>
-          {dataHouse.map((el, index) => (
-            <option key={index} value={el.value}>
-              {el.value}
-            </option>
-          ))}
-        </select>
-      </label>
-      <span>{errors.house?.message}</span>
-      <div>
-        Qual é a sua família?
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      marginLeft={theme.spacing(10)}
+      marginY={theme.spacing(5)}
+      width="50%"
+      bgcolor={theme.palette.background.paper}
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <Box display="flex" margin={theme.spacing(2)}>
+        <Typography variant="h5" sx={{ alignSelf: 'center' }}>
+          Formulário de Avaliação
+        </Typography>
+      </Box>
+      <Box gap={2} display="flex" flexDirection="row" alignContent="space-between" marginY="10px">
+        <TextField
+          id="outlined-error-helper-text outlined-textarea"
+          label={<Typography sx={{ fontSize: 14 }}>Nome</Typography>}
+          size="small"
+          helperText={
+            <Typography sx={{ color: 'red', fontSize: 12 }}>{errors.name?.message}</Typography>
+          }
+          type="text"
+          {...register('name')}
+        />
+        <TextField
+          id="outlined-error-helper-text outlined-textarea"
+          label={<Typography sx={{ fontSize: 14 }}>Sobrenome</Typography>}
+          size="small"
+          helperText={
+            <Typography sx={{ color: 'red', fontSize: 12 }}>{errors.lastname?.message}</Typography>
+          }
+          type="text"
+          {...register('lastname')}
+        />
+      </Box>
+      <Box gap={4} display="flex" flexDirection="row" marginY="5px">
+        <Box display="flex" marginRight={theme.spacing(12)}>
+          <TextField
+            id="outlined-error-helper-text outlined-textarea"
+            label={<Typography sx={{ fontSize: 14 }}>Email</Typography>}
+            size="small"
+            helperText={
+              <Typography sx={{ color: 'red', fontSize: 12 }}>{errors.email?.message}</Typography>
+            }
+            type="email"
+            {...register('email')}
+          />
+        </Box>
+        <Box display="flex">
+          <TextField
+            variant="outlined"
+            select
+            size="small"
+            label={<Typography sx={{ fontSize: 14 }}>Casa</Typography>}
+            defaultValue="Selecionar"
+            helperText={
+              <Typography sx={{ color: 'red', fontSize: 12 }}>{errors.house?.message}</Typography>
+            }
+            {...register('house')}
+          >
+            <MenuItem value="Selecionar">
+              <Typography>Selecionar</Typography>
+            </MenuItem>
+            {dataHouse.map((option, index) => (
+              <MenuItem key={index} value={option.value}>
+                <Typography>{option.value}</Typography>
+              </MenuItem>
+            ))}
+          </TextField>
+        </Box>
+      </Box>
+      <Divider />
+      <Box
+        display="flex"
+        flexDirection="row"
+        alignItems="center"
+        width="80%"
+        marginY={theme.spacing(1)}
+      >
+        <Typography sx={{ fontSize: 16, margin: '10px' }}>Qual é a sua família?</Typography>
         {dataFamily.map(el => (
-          <div key={el.label}>
-            <input id="family" type="radio" value={el.value} {...register('family')} />
-            <label htmlFor="family">{el.label}</label>
-          </div>
+          <Box display="flex" flexDirection="row" key={el.label}>
+            <FormControl>
+              <RadioGroup
+                aria-labelledby="demo-radio-buttons-group-label"
+                name="radio-buttons-group"
+              >
+                <FormControlLabel
+                  value="frontend"
+                  control={
+                    <Radio
+                      size="small"
+                      sx={{ '& .MuiSvgIcon-root': { fontSize: 14 } }}
+                      value={el.value}
+                      aria-label={el.label}
+                      {...register('family')}
+                    />
+                  }
+                  label={<Typography>{el.label}</Typography>}
+                />
+              </RadioGroup>
+            </FormControl>
+          </Box>
         ))}
-      </div>
-      <span>{errors.family?.message}</span>
-      <div>
-        Qual conteúdo você está com mais vontade de aprender?
+        <Typography sx={{ fontSize: 12, color: 'red' }}>{errors.family?.message}</Typography>
+      </Box>
+      <Box width="70%">
+        <Typography>Qual conteúdo você está com mais vontade de aprender?</Typography>
         {dataStack.map(el => (
-          <div key={el.label}>
-            <input id="stack" type="checkbox" value={el.value} {...register('stack')} />
-            <label htmlFor="stack">{el.label}</label>
-          </div>
+          <Box sx={{ marginLeft: '10px' }} key={el.label}>
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    sx={{ '& .MuiSvgIcon-root': { fontSize: 14 } }}
+                    value={el.value}
+                    {...register('stack')}
+                  />
+                }
+                label={<Typography>{el.label}</Typography>}
+              />
+            </FormGroup>
+          </Box>
         ))}
-        <span>{errors.stack?.message}</span>
-      </div>
-      <div>Como você avalia a Trybewarts?</div>
-      {dataScore.map(el => (
-        <div key={el.label}>
-          <input id="score" type="radio" value={el.value} {...register('score')} />
-          <label htmlFor="score">{el.label}</label>
-        </div>
-      ))}
-      <span>{errors.score?.message}</span>
-      <TextArea ContextProps={ContextProps} />
-      <span>{errors.comments?.message}</span>
-      <input
-        id="agreement"
-        type="checkbox"
-        onChange={() => {
-          setDisabled(false);
-        }}
-      />
-      <label htmlFor="agreement">Você concorda com o uso das informações acima?</label>
-      <input type="submit" disabled={isDisabled} />
-    </form>
+        <Typography sx={{ fontSize: 12, color: 'red' }}>{errors.stack?.message}</Typography>
+      </Box>
+      <Box display="flex" flexDirection="row" margin={theme.spacing(2)}>
+        <Typography>Como você avalia a Trybewarts?</Typography>
+        {dataScore.map(el => (
+          <Box key={el.label}>
+            <FormControl>
+              <RadioGroup
+                aria-labelledby="demo-radio-buttons-group-label"
+                name="radio-buttons-group"
+              >
+                <FormControlLabel
+                  value="frontend"
+                  control={
+                    <Radio
+                      size="small"
+                      sx={{ '& .MuiSvgIcon-root': { fontSize: 14 } }}
+                      value={el.value}
+                      aria-label={el.label}
+                      {...register('family')}
+                    />
+                  }
+                  label={<Typography>{el.label}</Typography>}
+                />
+              </RadioGroup>
+            </FormControl>
+          </Box>
+        ))}
+        <Typography sx={{ fontSize: 12, color: 'red' }}>{errors.score?.message}</Typography>
+      </Box>
+      <Box>
+        <TextArea ContextProps={ContextProps} />
+        <Typography sx={{ fontSize: 12, color: 'red' }}>{errors.comments?.message}</Typography>
+      </Box>
+      <Box sx={{ marginLeft: '10px' }}>
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                sx={{ '& .MuiSvgIcon-root': { fontSize: 14 } }}
+                onChange={() => {
+                  setDisabled(false);
+                }}
+              />
+            }
+            label={
+              <Typography sx={{ fontSize: 14 }}>
+                Você concorda com o uso das informações acima?
+              </Typography>
+            }
+          />
+        </FormGroup>
+      </Box>
+      <Box margin={theme.spacing(4)}>
+        <Button color="primary" disabled={isDisabled} variant="contained" type="submit">
+          <Typography variant="button" sx={{ fontFamily: 'fantasy' }}>
+            Enviar
+          </Typography>
+        </Button>
+      </Box>
+      <Box>
+        <ImageLogo />
+      </Box>
+    </Box>
   );
 };
 

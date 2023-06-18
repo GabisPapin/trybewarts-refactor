@@ -1,15 +1,13 @@
-import React from 'react';
 import { type ITextArea } from 'interfaces/IFeedback';
+import { Box, Typography } from '@mui/material';
+import { TextareaAutosize } from '@mui/base';
 
 const TextArea = (props: ITextArea): JSX.Element => {
   const { handleSaveComments, setValueCounter, valueCounter, setEventKey, eventKey } =
     props.ContextProps;
 
-  const counterTextArea = (
-    event: React.ChangeEvent<HTMLTextAreaElement>,
-    eventKey: string,
-  ): void => {
-    const valueArea = event.target.value;
+  const counterTextArea = (event: string, eventKey: string): void => {
+    const valueArea = event;
     const counter = 500;
 
     if (eventKey === 'Backspace') {
@@ -26,25 +24,24 @@ const TextArea = (props: ITextArea): JSX.Element => {
   };
 
   return (
-    <div>
-      <label htmlFor="comments">
+    <Box>
+      <Typography sx={{ fontSize: 16, marginBottom: '2px', marginLeft: '2px' }}>
         Deixe seu comentário
-        <textarea
-          id="comments"
-          cols={30}
-          rows={10}
-          maxLength={500}
-          onKeyDown={event => {
-            setEventKey(event.key);
-          }}
-          onChange={event => {
-            handleSaveComments(event);
-            counterTextArea(event, eventKey);
-          }}
-        ></textarea>
-      </label>
-      <span>{valueCounter}</span>
-    </div>
+      </Typography>
+      <TextareaAutosize
+        minRows={6}
+        maxRows={500}
+        maxLength={500}
+        onKeyDown={event => {
+          setEventKey(event.key);
+        }}
+        onChange={event => {
+          handleSaveComments(event.target.value);
+          counterTextArea(event.target.value, eventKey);
+        }}
+      ></TextareaAutosize>
+      <Typography sx={{ fontSize: 14, marginLeft: '2px' }}>{valueCounter}</Typography>
+    </Box>
   );
 };
 

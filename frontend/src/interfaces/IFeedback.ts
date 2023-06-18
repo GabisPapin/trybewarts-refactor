@@ -11,7 +11,7 @@ export interface IFormData {
 
 export interface ITextArea {
   ContextProps: {
-    handleSaveComments: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    handleSaveComments: (event: string) => void;
     setValueCounter: (maxLengthTextArea: number) => void;
     valueCounter: number;
     setEventKey: (event: string) => void;
