@@ -138,7 +138,7 @@ const Feedback = (): JSX.Element => {
         <Box gap={4} display="flex" flexDirection="row" marginY="5px">
           <Box display="flex" marginRight={theme.spacing(12)}>
             <TextField
-              id="outlined-error-helper-text outlined-textarea"
+              id="outlined-textarea"
               label={<Typography sx={{ fontSize: 14 }}>Email</Typography>}
               size="small"
               helperText={
@@ -172,14 +172,16 @@ const Feedback = (): JSX.Element => {
           </Box>
         </Box>
         <Divider />
+        <Box>
+          <Typography sx={{ fontSize: 16, margin: '10px' }}>Qual é a sua família?</Typography>
+        </Box>
         <Box
           display="flex"
           flexDirection="row"
           alignItems="center"
-          width="80%"
+          width="65%"
           marginY={theme.spacing(1)}
         >
-          <Typography sx={{ fontSize: 16, margin: '10px' }}>Qual é a sua família?</Typography>
           {dataFamily.map(el => (
             <Box display="flex" flexDirection="row" key={el.label}>
               <FormControl>
@@ -226,8 +228,10 @@ const Feedback = (): JSX.Element => {
           ))}
           <Typography sx={{ fontSize: 12, color: 'red' }}>{errors.stack?.message}</Typography>
         </Box>
-        <Box display="flex" flexDirection="row" margin={theme.spacing(2)}>
+        <Box>
           <Typography sx={{ fontSize: 16 }}>Como você avalia a Trybewarts?</Typography>
+        </Box>
+        <Box display="flex" flexDirection="row" margin={theme.spacing(2)}>
           {dataScore.map(el => (
             <Box key={el.label}>
               <FormControl>
@@ -242,7 +246,7 @@ const Feedback = (): JSX.Element => {
                         sx={{ '& .MuiSvgIcon-root': { fontSize: 14 } }}
                         value={el.value}
                         aria-label={el.label}
-                        {...register('family')}
+                        {...register('score')}
                       />
                     }
                     label={<Typography>{el.label}</Typography>}
